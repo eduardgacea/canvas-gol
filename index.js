@@ -1,3 +1,7 @@
+// TO DO: implement everything using flat arrays
+// TO DO: switch to requestAnimationFrame() instead of setInterval()
+// TO DO: implement offscreen canvas buffering
+
 'use strict';
 
 const root = document.getElementById('root');
@@ -5,17 +9,17 @@ const form = document.getElementById('form');
 const run = document.getElementById('run');
 
 const canvasParams = [];
-const r = 20;
 
 const DEAD_COLOR = 'white';
 const STROKE_COLOR = 'lightgray';
 
 let canvas;
 let ctx;
+let r = 30;
 let board = [];
 let intervalId;
 let isRunning = false;
-let speed = 100;
+let speed = 50;
 
 function generateBoardObj(w, h) {
   if (board.length) board.splice(0, board.length);
@@ -38,7 +42,7 @@ function renderBoard() {
   for (let i = 0; i < h / r; i++) {
     for (let j = 0; j < w / r; j++) {
       ctx.strokeStyle = STROKE_COLOR;
-      if (board[i][j].alive) ctx.fillStyle = `rgb(${i * 8},150,${j * 8})`;
+      if (board[i][j].alive) ctx.fillStyle = `rgb(${i * 8},155,${j * 8})`;
       else ctx.fillStyle = DEAD_COLOR;
       ctx.fillRect(j * r, i * r, r, r);
       ctx.strokeRect(j * r, i * r, r, r);
@@ -141,10 +145,12 @@ form.addEventListener('submit', e => {
   stopSimulation();
   if (canvas) canvas.remove();
   canvasParams.splice(0, canvasParams.length);
+  r = document.getElementById('cell-radius').value;
   canvasParams.push(document.getElementById('canvas-width').value);
   canvasParams.push(document.getElementById('canvas-height').value);
   const [w, h] = canvasParams;
   canvas = document.createElement('canvas');
+  canvas.id = 'canvas';
   canvas.width = w;
   canvas.height = h;
   root.append(canvas);
