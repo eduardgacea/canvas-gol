@@ -16,11 +16,9 @@ let ctx;
 
 function generateBoardObj(w, h) {
   if (board.length) board.splice(0, board.length);
-  const colCount = w / r;
-  const rowCount = h / r;
-  for (let i = 0; i < rowCount; i++) {
+  for (let i = 0; i < h / r; i++) {
     const row = [];
-    for (let j = 0; j < colCount; j++) {
+    for (let j = 0; j < w / r; j++) {
       const cell = {
         i,
         j,
@@ -45,6 +43,20 @@ function renderBoard() {
   }
 }
 
+function getLiveNeighbourCount(i, j) {
+  let count = 0;
+  for (let di = -1; di <= 1; di++) {
+    for (let dj = -1; dj <= 1; dj++) {
+      if ((di !== 0 || dj !== 0) && board[i + di]) {
+        if (board[i + di][j + dj] && board[i + di][j + dj].alive) {
+          count++;
+        }
+      }
+    }
+  }
+  return count;
+}
+
 form.addEventListener('submit', e => {
   e.preventDefault();
   if (canvas) canvas.remove();
@@ -60,5 +72,10 @@ form.addEventListener('submit', e => {
   ctx.fillStyle = 'lightgray';
   ctx.fillRect(0, 0, w, h);
   generateBoardObj(w, h);
+  for (let i = 0; i < h / 10; i++) {
+    for (let j = 0; j < w / 10; j++) {
+      board[i][j].liveNeighbourCount = getLiveNeighbourCount(i, j);
+    }
+  }
   renderBoard();
 });
